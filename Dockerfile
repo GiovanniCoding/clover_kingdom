@@ -1,5 +1,4 @@
-ARG PYTHON_VERSION=3.12.4
-FROM python:${PYTHON_VERSION}-slim as base
+FROM python:3.12.4-slim
 
 WORKDIR /app
 
