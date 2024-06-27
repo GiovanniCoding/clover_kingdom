@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, Enum
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 import enum
 
+from sqlalchemy import Column, Enum, Integer, String
+from sqlalchemy.orm import relationship
+
 from src.app.db.models.base import BaseModel
+
 
 class MagicAffinityEnum(enum.Enum):
     darkness = "Oscuridad"
@@ -15,7 +16,7 @@ class MagicAffinityEnum(enum.Enum):
 
 
 class Profile(BaseModel):
-    __tablename__ = 'profiles'
+    __tablename__ = "profiles"
 
     personal_id = Column(String(10), unique=True, nullable=False)
     name = Column(String(20), nullable=False)

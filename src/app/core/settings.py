@@ -1,5 +1,6 @@
 import os
 
+
 class Settings:
     # General settings
     PROJECT_NAME: str = "Clover Kingdom"
@@ -15,7 +16,7 @@ class Settings:
     DB_DATABASE: str = os.getenv("DB_DATABASE", "postgres")
 
     SQLALCHEMY_DATABASE_URL: str = (
-        f"postgresql://{ DB_USER }:{ DB_PASSWORD }@{ DB_HOSTNAME }:{ DB_PORT }/{ DB_DATABASE }"
+        f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOSTNAME}:{DB_PORT}/{DB_DATABASE}"
     )
 
 
