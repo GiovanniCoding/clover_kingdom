@@ -16,3 +16,9 @@ restart-server:
 
 stop:
 	docker compose stop
+
+migrate:
+	docker compose run --rm server alembic upgrade head
+
+migrations:
+	docker compose run --rm server alembic revision --autogenerate

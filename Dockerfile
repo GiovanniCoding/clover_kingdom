@@ -2,12 +2,12 @@ FROM python:3.12.4-slim
 
 WORKDIR /app
 
-COPY requirements.txt /app/
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY . /src/app/
+COPY . .
 
 ENV PYTHONPATH="/app"
 
-CMD ["fastapi", "run", "app/main.py"]
+CMD ["fastapi", "run", "src/app/main.py"]
