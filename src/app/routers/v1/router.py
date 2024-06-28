@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .endpoints import applications, health, assignments
+from .endpoints import applications, assignments, health
 
 router = APIRouter(
     prefix="/v1",

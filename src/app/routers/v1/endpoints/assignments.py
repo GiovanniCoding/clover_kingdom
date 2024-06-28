@@ -4,9 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.db.database import get_db
 from app.db.models.applications import ApplicationRepository
-
 from app.schemas.assignments_schemas import AssignmentsResponse
-
 
 router = APIRouter()
 

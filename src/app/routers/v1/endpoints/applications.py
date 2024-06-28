@@ -6,12 +6,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.db.database import get_db
 from app.db.models.applications import ApplicationRepository
 from app.db.models.students import StudentRepository
+from app.helpers.grimoire import select_grimoire
 from app.schemas.applications_schemas import (
     ApplicationResponse,
     PostApplicationRequest,
     PutApplicationRequest,
 )
-from app.helpers.grimoire import select_grimoire
 
 router = APIRouter()
 
@@ -237,7 +237,6 @@ async def delete_application(id: UUID, session=Depends(get_db)):
         student_repository = StudentRepository(session)
         student = student_repository.get_student_by_id(id=application.student_id)
         student_repository.delete_student(student=student)
-
 
         # Return success message
         return {"message": "Application deleted successfully"}

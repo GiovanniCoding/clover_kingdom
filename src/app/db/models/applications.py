@@ -1,5 +1,6 @@
-from typing import List
 from datetime import datetime
+from typing import List
+
 from sqlalchemy import UUID as PGUUID
 from sqlalchemy import Column, Enum, ForeignKey
 from sqlalchemy.orm import relationship
@@ -40,14 +41,11 @@ class ApplicationRepository:
             .filter(Application.deleted_at.is_(None))
             .all()
         )
-    
+
     def get_approved_applications(self) -> List[Application]:
         return (
             self.session.query(Application)
-            .filter(
-                Application.status == "Aprobada",
-                Application.deleted_at.is_(None)
-            )
+            .filter(Application.status == "Aprobada", Application.deleted_at.is_(None))
             .all()
         )
 
@@ -63,7 +61,7 @@ class ApplicationRepository:
         self.session.commit()
         self.session.refresh(application)
         return application
-    
+
     def delete_application(self, application: Application) -> Application:
         application.deleted_at = datetime.now()
         self.session.commit()

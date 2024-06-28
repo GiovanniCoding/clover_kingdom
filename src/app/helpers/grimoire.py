@@ -1,5 +1,6 @@
 import random
 
+
 def select_grimoire():
     grimoires = [
         "Una Hoja",
