@@ -4,7 +4,7 @@ from pydantic import BaseModel
 router = APIRouter()
 
 
-class HealthResponseModel(BaseModel):
+class HealthResponse(BaseModel):
     status: str
 
 
@@ -14,10 +14,10 @@ class HealthResponseModel(BaseModel):
     summary="Health Check",
     description="Check the health status of the API",
     response_description="Health status of the API",
-    response_model=HealthResponseModel,
+    response_model=HealthResponse,
 )
 async def get_health_status():
     """
     Endpoint to check the health status of the API
     """
-    return HealthResponseModel(status="ok")
+    return HealthResponse(status="ok")

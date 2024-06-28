@@ -1,20 +1,28 @@
-import enum
-
-from sqlalchemy import Column, Enum
-from sqlalchemy.orm import relationship
-
+from sqlalchemy import Column, Enum, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
 from src.app.db.models.base import BaseModel
 
 
-class ApplicationsStatusEnum(enum.Enum):
-    pending = "Pendiente"
-    approved = "Aprobada"
-    rejected = "Rechazada"
+ApplicationsStatusEnum = Enum("Pendiente", "Aprobada", "Rechazada", name="applications_status")
 
 
-class Applications(BaseModel):
+class Application(BaseModel):
     __tablename__ = "applications"
 
-    status = Column(Enum(ApplicationsStatusEnum), nullable=False)
+    status = Column(ApplicationsStatusEnum, nullable=False)
+    profile_id = Column(UUID, ForeignKey("profiles.id"), nullable=False)
 
-    profile = relationship("Profile", uselist=False, back_populates="application")
+
+class ApplicationRepository():
+    def __init__(self, session):
+        self.session = session
+    
+    def create_application(self, **kwargs):
+        application = Application(
+            status='Pendiente',
+            profile_id=kwargs.get("profile_id"),
+        )
+        self.session.add(application)
+        self.session.commit()
+        self.session.refresh(application)
+        return application

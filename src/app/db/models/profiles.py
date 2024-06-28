@@ -1,18 +1,11 @@
-import enum
-
 from sqlalchemy import Column, Enum, Integer, String
 from sqlalchemy.orm import relationship
 
 from src.app.db.models.base import BaseModel
+from sqlalchemy.orm import Mapped
 
 
-class MagicAffinityEnum(enum.Enum):
-    darkness = "Oscuridad"
-    light = "Luz"
-    fire = "Fuego"
-    water = "Agua"
-    wind = "Viento"
-    land = "Tierra"
+MagicAffinityEnum = Enum("Oscuridad", "Luz", "Fuego", "Agua", "Viento", "Tierra", name="magic_affinity")
 
 
 class Profile(BaseModel):
@@ -22,6 +15,22 @@ class Profile(BaseModel):
     name = Column(String(20), nullable=False)
     last_name = Column(String(20), nullable=False)
     age = Column(Integer, nullable=False)
-    magic_affinity = Column(Enum(MagicAffinityEnum), nullable=False)
+    magic_affinity = Column(MagicAffinityEnum, nullable=False)
 
-    applications = relationship("Applications", back_populates="profile")
+
+class ProfileRepository():
+    def __init__(self, session):
+        self.session = session
+
+    def create_profile(self, **kwargs):
+        profile = Profile(
+            personal_id=kwargs.get("personal_id"),
+            name=kwargs.get("name"),
+            last_name=kwargs.get("last_name"),
+            age=kwargs.get("age"),
+            magic_affinity=kwargs.get("magic_affinity"),
+        )
+        self.session.add(profile)
+        self.session.commit()
+        self.session.refresh(profile)
+        return profile
