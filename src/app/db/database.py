@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.orm import declarative_base
+
 from alembic import command
 from alembic.config import Config
 from src.app.core.settings import settings

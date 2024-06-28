@@ -1,5 +1,4 @@
-from src.app.db.models.students import Student
-from src.app.db.models.students import StudentRepository
+from src.app.db.models.students import Student, StudentRepository
 from src.tests.conftest import StudentFactory
 
 
@@ -14,7 +13,11 @@ def test_create_student(db_session):
         magic_affinity=student.magic_affinity,
     )
 
-    db_student = db_session.query(Student).filter_by(identification=student.identification).one_or_none()
+    db_student = (
+        db_session.query(Student)
+        .filter_by(identification=student.identification)
+        .one_or_none()
+    )
     assert db_student is not None
     assert db_student.identification == student.identification
     assert db_student.name == student.name
@@ -38,7 +41,11 @@ def test_get_students(db_session):
         )
     db_students = student_repository.get_students()
 
-    count_found = sum(1 for db_student in db_students if db_student.identification in [student.identification for student in students])
+    count_found = sum(
+        1
+        for db_student in db_students
+        if db_student.identification in [student.identification for student in students]
+    )
     assert count_found == len(students)
 
 
@@ -53,7 +60,9 @@ def test_get_student_by_identification(db_session):
         age=student.age,
         magic_affinity=student.magic_affinity,
     )
-    db_student = student_repository.get_student_by_identification(student.identification)
+    db_student = student_repository.get_student_by_identification(
+        student.identification
+    )
 
     assert db_student is not None
     assert db_student.identification == student.identification
