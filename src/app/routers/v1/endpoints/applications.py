@@ -3,11 +3,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.db.database import get_db
-from app.db.models.applications import ApplicationRepository
-from app.db.models.students import StudentRepository
-from app.helpers.grimoire import select_grimoire
-from app.schemas.applications_schemas import (
+from src.app.db.database import get_db
+from src.app.db.models.applications import ApplicationRepository
+from src.app.db.models.students import StudentRepository
+from src.app.helpers.grimoire import select_grimoire
+from src.app.schemas.applications_schemas import (
     ApplicationResponse,
     PostApplicationRequest,
     PutApplicationRequest,

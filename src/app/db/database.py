@@ -4,7 +4,7 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.orm import declarative_base
 from alembic import command
 from alembic.config import Config
-from app.core.settings import settings
+from src.app.core.settings import settings
 
 engine = create_engine(settings.SQLALCHEMY_DATABASE_URL, echo=True)
 
