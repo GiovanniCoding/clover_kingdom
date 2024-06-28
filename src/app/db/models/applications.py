@@ -30,3 +30,8 @@ class ApplicationRepository:
         self.session.commit()
         self.session.refresh(application)
         return application
+    
+    def get_applications(self):
+        return self.session.query(Application).filter(
+            Application.deleted_at.is_(None)
+        ).all()

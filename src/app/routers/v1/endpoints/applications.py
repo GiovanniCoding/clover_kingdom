@@ -5,7 +5,7 @@ from app.db.models.applications import ApplicationRepository
 from app.db.models.profiles import ProfileRepository
 from app.schemas.applications_schemas import (
     PostApplicationRequest,
-    PostApplicationResponse,
+    ApplicationResponse,
 )
 from typing import List
 
@@ -18,11 +18,11 @@ router = APIRouter()
     summary="Create a new application",
     description="Create a new application",
     response_description="Application created successfully",
-    response_model=PostApplicationResponse,
+    response_model=ApplicationResponse,
 )
 async def post_application(
     application: PostApplicationRequest, session=Depends(get_db)
-):
+) -> ApplicationResponse:
     """
     Endpoint to create a new application
     """
@@ -54,7 +54,7 @@ async def post_application(
         )
 
         # Return application created
-        return PostApplicationResponse(
+        return ApplicationResponse(
             id=application.id,
             personal_id=profile.personal_id,
             name=profile.name,
@@ -68,4 +68,40 @@ async def post_application(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Something went wrong while creating the application: {e}",
+        )
+
+
+@router.get(
+    "/",
+    tags=["solicitudes"],
+    summary="Get all applications",
+    description="Get all applications",
+    response_description="Applications retrieved successfully",
+    response_model=List[ApplicationResponse],
+)
+async def get_applications(session=Depends(get_db)) -> List[ApplicationResponse]:
+    """
+    Endpoint to get all applications
+    """
+    try:
+        # Get all applications
+        application_repository = ApplicationRepository(session)
+        applications = application_repository.get_applications()
+
+        # Return applications
+        return [
+            ApplicationResponse(
+                id=application.id,
+                personal_id=application.profile.personal_id,
+                name=application.profile.name,
+                last_name=application.profile.last_name,
+                age=application.profile.age,
+                magic_affinity=application.profile.magic_affinity,
+            )
+            for application in applications
+        ]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Something went wrong while getting the applications: {e}",
         )

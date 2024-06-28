@@ -20,7 +20,7 @@ class PostApplicationRequest(BaseModel):
         return value
 
 
-class PostApplicationResponse(BaseModel):
+class ApplicationResponse(BaseModel):
     id: UUID
     personal_id: str
     name: str
