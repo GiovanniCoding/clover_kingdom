@@ -6,7 +6,7 @@ from pydantic import BaseModel, field_validator
 
 
 class PostApplicationRequest(BaseModel):
-    student_id: Annotated[str, annotated_types.MaxLen(10)]
+    identification: Annotated[str, annotated_types.MaxLen(10)]
     name: Annotated[str, annotated_types.MaxLen(20)]
     last_name: Annotated[str, annotated_types.MaxLen(20)]
     age: Annotated[int, annotated_types.Ge(10), annotated_types.Le(99)]
@@ -21,7 +21,7 @@ class PostApplicationRequest(BaseModel):
 
 
 class PutApplicationRequest(BaseModel):
-    student_id: Optional[Annotated[str, annotated_types.MaxLen(10)]] = None
+    identification: Optional[Annotated[str, annotated_types.MaxLen(10)]] = None
     name: Optional[Annotated[str, annotated_types.MaxLen(20)]] = None
     last_name: Optional[Annotated[str, annotated_types.MaxLen(20)]] = None
     age: Optional[Annotated[int, annotated_types.Ge(10), annotated_types.Le(99)]] = None
@@ -36,7 +36,7 @@ class PutApplicationRequest(BaseModel):
 
     def as_dict(self):
         return {
-            "student_id": self.student_id,
+            "identification": self.identification,
             "name": self.name,
             "last_name": self.last_name,
             "age": self.age,
@@ -46,20 +46,22 @@ class PutApplicationRequest(BaseModel):
 
 class ApplicationResponse(BaseModel):
     id: UUID
-    student_id: str
+    identification: str
     name: str
     last_name: str
     age: int
     magic_affinity: str
     status: str
+    grimoire: str = None
 
     def as_dict(self):
         return {
             "id": self.id,
-            "student_id": self.student_id,
+            "identification": self.identification,
             "name": self.name,
             "last_name": self.last_name,
             "age": self.age,
             "magic_affinity": self.magic_affinity,
             "status": self.status,
+            "grimoire": self.grimoire,
         }

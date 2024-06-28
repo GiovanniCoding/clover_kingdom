@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.db.database import get_db
 from app.db.models.students import StudentRepository
+from app.db.models.applications import ApplicationRepository
 from app.schemas.applications_schemas import (
     ApplicationResponse,
     PostApplicationRequest,
@@ -31,33 +32,38 @@ async def post_application(
     try:
         # Verify if the student id is already in the database
         student_repository = StudentRepository(session)
-        student = student_repository.get_student_by_student_id(
-            student_id=application.student_id
+        application_repository = ApplicationRepository(session)
+        student = student_repository.get_student_by_identification(
+            identification=application.identification
         )
         if student:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="The student id is already in the database",
+                detail="The student application is already in the database",
             )
 
         # Create student in database
         student = student_repository.create_student(
-            student_id=application.student_id,
+            identification=application.identification,
             name=application.name,
             last_name=application.last_name,
             age=application.age,
             magic_affinity=application.magic_affinity,
         )
 
+        # Create application in database
+        application = application_repository.create_application(student_id=student.id)
+
         # Return application created
         return ApplicationResponse(
-            id=student.id,
-            student_id=student.student_id,
-            name=student.name,
-            last_name=student.last_name,
-            age=student.age,
-            magic_affinity=student.magic_affinity,
-            status=student.status,
+            id=application.id,
+            identification=application.student.identification,
+            name=application.student.name,
+            last_name=application.student.last_name,
+            age=application.student.age,
+            magic_affinity=application.student.magic_affinity,
+            status=application.status,
+            grimoire=application.student.grimoire,
         )
     except HTTPException as http_exception:
         raise http_exception
@@ -82,18 +88,18 @@ async def get_applications(session=Depends(get_db)) -> List[ApplicationResponse]
     """
     try:
         # Get all applications
-        student_repository = StudentRepository(session)
-        applications = student_repository.get_students()
+        application_repository = ApplicationRepository(session)
+        applications = application_repository.get_applications()
 
         # Return applications
         return [
             ApplicationResponse(
                 id=application.id,
-                student_id=application.student_id,
-                name=application.name,
-                last_name=application.last_name,
-                age=application.age,
-                magic_affinity=application.magic_affinity,
+                identification=application.student.identification,
+                name=application.student.name,
+                last_name=application.student.last_name,
+                age=application.student.age,
+                magic_affinity=application.student.magic_affinity,
                 status=application.status,
             )
             for application in applications
@@ -121,28 +127,30 @@ async def put_application(
     """
     try:
         # Verify if the application exists in the database
-        student_repository = StudentRepository(session)
-        student = student_repository.get_student_by_id(id=id)
-        if not student:
+        application_repository = ApplicationRepository(session)
+        application = application_repository.get_application_by_id(application_id=id)
+        if not application:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="The application was not found",
             )
 
         # Update student in database
+        student_repository = StudentRepository(session)
+        student = student_repository.get_student_by_id(id=application.student_id)
         student = student_repository.update_student(
             student=student, **new_values.as_dict()
         )
 
         # Return application updated
         return ApplicationResponse(
-            id=student.id,
-            student_id=student.student_id,
+            id=application.id,
+            identification=student.identification,
             name=student.name,
             last_name=student.last_name,
             age=student.age,
             magic_affinity=student.magic_affinity,
-            status=student.status,
+            status=application.status,
         )
     except Exception as e:
         raise HTTPException(
@@ -165,26 +173,27 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
     """
     try:
         # Verify if the application exists in the database
-        student_repository = StudentRepository(session)
-        student = student_repository.get_student_by_id(id=id)
-        if not student:
+        application_repository = ApplicationRepository(session)
+        application = application_repository.get_application_by_id(application_id=id)
+        if not application:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="The application was not found",
             )
 
-        # Update student in database
-        student = student_repository.update_student(student=student, status="Aprobada")
+        # Update the application status in database
+        application = application_repository.update_application(application=application, status="Aprobada")
+        # TODO: Assign a grimoire to the student
 
         # Return application updated
         return ApplicationResponse(
-            id=student.id,
-            student_id=student.student_id,
-            name=student.name,
-            last_name=student.last_name,
-            age=student.age,
-            magic_affinity=student.magic_affinity,
-            status=student.status,
+            id=application.id,
+            identification=application.student.identification,
+            name=application.student.name,
+            last_name=application.student.last_name,
+            age=application.student.age,
+            magic_affinity=application.student.magic_affinity,
+            status=application.status,
         )
     except Exception as e:
         raise HTTPException(

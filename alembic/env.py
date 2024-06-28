@@ -6,6 +6,7 @@ from alembic import context
 from src.app.core.settings import settings
 from src.app.db.models.base import Base
 from src.app.db.models.students import Student  # noqa
+from src.app.db.models.applications import Application  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

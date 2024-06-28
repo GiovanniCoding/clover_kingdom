@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-
+from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Enum, Integer, String
 
 from src.app.db.models.base import BaseModel
@@ -8,20 +8,22 @@ from src.app.db.models.base import BaseModel
 MagicAffinityEnum = Enum(
     "Oscuridad", "Luz", "Fuego", "Agua", "Viento", "Tierra", name="magic_affinity"
 )
-ApplicationsStatusEnum = Enum(
-    "Pendiente", "Aprobada", "Rechazada", name="applications_status"
+GrimoireRarityEnum = Enum(
+    'Una Hoja', 'Dos Hojas', 'Tres Hojas', 'Cuatro Hojas', 'Cinco Hojas', name="grimoire_rarity"
 )
 
 
 class Student(BaseModel):
     __tablename__ = "students"
 
-    student_id = Column(String(10), unique=True, nullable=False)
+    identification = Column(String(10), unique=True, nullable=False)
     name = Column(String(20), nullable=False)
     last_name = Column(String(20), nullable=False)
     age = Column(Integer, nullable=False)
     magic_affinity = Column(MagicAffinityEnum, nullable=False)
-    status = Column(ApplicationsStatusEnum, nullable=False)
+    grimoire = Column(GrimoireRarityEnum, nullable=True)
+
+    applications = relationship("Application", back_populates="student")
 
 
 class StudentRepository:
@@ -29,27 +31,26 @@ class StudentRepository:
         self.session = session
 
     def create_student(self, **kwargs):
-        profile = Student(
-            student_id=kwargs.get("student_id"),
+        student = Student(
+            identification=kwargs.get("identification"),
             name=kwargs.get("name"),
             last_name=kwargs.get("last_name"),
             age=kwargs.get("age"),
             magic_affinity=kwargs.get("magic_affinity"),
-            status="Pendiente",
         )
-        self.session.add(profile)
+        self.session.add(student)
         self.session.commit()
-        self.session.refresh(profile)
-        return profile
+        self.session.refresh(student)
+        return student
 
     def get_students(self) -> List[Student]:
         return self.session.query(Student).filter(Student.deleted_at.is_(None)).all()
 
-    def get_student_by_student_id(self, student_id: str):
+    def get_student_by_identification(self, identification: str):
         return (
             self.session.query(Student)
             .filter(
-                Student.student_id == student_id,
+                Student.identification == identification,
                 Student.deleted_at.is_(None),
             )
             .first()
