@@ -61,11 +61,11 @@ def setup_database(connection):
 @pytest.fixture(scope='function')
 def db_session(connection, setup_database):
     """Proporciona una sesión de base de datos que hace rollback después de cada prueba."""
-    transaction = connection.begin()
-    session = SessionLocal(bind=connection)
-    yield session
-    session.close()
-    transaction.rollback()
 
-    # Cierra la sesión global para asegurar que no haya conexiones abiertas
-    Session.remove()
+    session = SessionLocal(bind=connection)
+
+    try:
+        yield session
+    finally:
+        session.close()
+        Session.remove()
