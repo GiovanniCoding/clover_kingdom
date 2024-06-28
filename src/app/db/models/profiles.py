@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Enum, Integer, String
+from sqlalchemy.orm import relationship, Mapped
 
 from src.app.db.models.base import BaseModel
 
@@ -15,6 +16,8 @@ class Profile(BaseModel):
     last_name = Column(String(20), nullable=False)
     age = Column(Integer, nullable=False)
     magic_affinity = Column(MagicAffinityEnum, nullable=False)
+
+    application: Mapped["Application"] = relationship(back_populates="profile") # type: ignore
 
 
 class ProfileRepository:

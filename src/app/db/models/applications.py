@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-
+from sqlalchemy.orm import relationship, Mapped
 from src.app.db.models.base import BaseModel
 
 ApplicationsStatusEnum = Enum(
@@ -12,7 +12,9 @@ class Application(BaseModel):
     __tablename__ = "applications"
 
     status = Column(ApplicationsStatusEnum, nullable=False)
+    
     profile_id = Column(UUID, ForeignKey("profiles.id"), nullable=False)
+    profile: Mapped["Profile"] = relationship(back_populates="application") # type: ignore
 
 
 class ApplicationRepository:
