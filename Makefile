@@ -22,3 +22,6 @@ migrate:
 
 migrations:
 	docker compose run --rm server alembic revision --autogenerate
+
+test:
+	docker compose run --rm server pytest
