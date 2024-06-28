@@ -1,7 +1,7 @@
-from uuid import UUID
-from sqlalchemy import Column, Enum, Integer, String
-from sqlalchemy.orm import relationship, Mapped
 from typing import List
+from uuid import UUID
+
+from sqlalchemy import Column, Enum, Integer, String
 
 from src.app.db.models.base import BaseModel
 
@@ -35,17 +35,15 @@ class StudentRepository:
             last_name=kwargs.get("last_name"),
             age=kwargs.get("age"),
             magic_affinity=kwargs.get("magic_affinity"),
-            status='Pendiente',
+            status="Pendiente",
         )
         self.session.add(profile)
         self.session.commit()
         self.session.refresh(profile)
         return profile
-    
+
     def get_students(self) -> List[Student]:
-        return self.session.query(Student).filter(
-            Student.deleted_at.is_(None)
-        ).all()
+        return self.session.query(Student).filter(Student.deleted_at.is_(None)).all()
 
     def get_student_by_student_id(self, student_id: str):
         return (
@@ -56,7 +54,7 @@ class StudentRepository:
             )
             .first()
         )
-    
+
     def get_student_by_id(self, id: UUID):
         return (
             self.session.query(Student)
@@ -66,7 +64,7 @@ class StudentRepository:
             )
             .first()
         )
-    
+
     def update_student(self, student: Student, **kwargs):
         for key, value in kwargs.items():
             if value is not None:

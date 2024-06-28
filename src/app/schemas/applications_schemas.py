@@ -33,7 +33,7 @@ class PutApplicationRequest(BaseModel):
         if value not in valid_options:
             raise ValueError(f"Magic affinity must be one of {valid_options}")
         return value
-    
+
     def as_dict(self):
         return {
             "student_id": self.student_id,

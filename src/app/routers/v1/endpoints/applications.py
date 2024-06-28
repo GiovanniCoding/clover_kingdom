@@ -1,14 +1,15 @@
+from typing import List
 from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.db.database import get_db
 from app.db.models.students import StudentRepository
 from app.schemas.applications_schemas import (
-    PostApplicationRequest,
     ApplicationResponse,
+    PostApplicationRequest,
     PutApplicationRequest,
 )
-from typing import List
 
 router = APIRouter()
 
@@ -112,7 +113,9 @@ async def get_applications(session=Depends(get_db)) -> List[ApplicationResponse]
     response_description="Application updated successfully",
     response_model=ApplicationResponse,
 )
-async def put_application(id: UUID, new_values: PutApplicationRequest, session=Depends(get_db)) -> ApplicationResponse:
+async def put_application(
+    id: UUID, new_values: PutApplicationRequest, session=Depends(get_db)
+) -> ApplicationResponse:
     """
     Endpoint to update an application
     """
@@ -127,7 +130,9 @@ async def put_application(id: UUID, new_values: PutApplicationRequest, session=D
             )
 
         # Update student in database
-        student = student_repository.update_student(student=student, **new_values.as_dict())
+        student = student_repository.update_student(
+            student=student, **new_values.as_dict()
+        )
 
         # Return application updated
         return ApplicationResponse(
@@ -144,6 +149,7 @@ async def put_application(id: UUID, new_values: PutApplicationRequest, session=D
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Something went wrong while updating the application: {e}",
         )
+
 
 @router.patch(
     "/{id}",
@@ -168,7 +174,7 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
             )
 
         # Update student in database
-        student = student_repository.update_student(student=student, status='Aprobada')
+        student = student_repository.update_student(student=student, status="Aprobada")
 
         # Return application updated
         return ApplicationResponse(
