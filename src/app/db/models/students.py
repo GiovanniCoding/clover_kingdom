@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-
+from datetime import datetime
 from sqlalchemy import Column, Enum, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -76,6 +76,12 @@ class StudentRepository:
         for key, value in kwargs.items():
             if value is not None:
                 setattr(student, key, value)
+        self.session.commit()
+        self.session.refresh(student)
+        return student
+    
+    def delete_student(self, student: Student):
+        student.deleted_at = datetime.now()
         self.session.commit()
         self.session.refresh(student)
         return student

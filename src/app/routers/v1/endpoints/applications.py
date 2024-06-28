@@ -202,3 +202,41 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Something went wrong while updating the application: {e}",
         )
+
+
+@router.delete(
+    "/{id}",
+    tags=["solicitudes"],
+    summary="Delete an application",
+    description="Delete an application",
+    response_description="Application deleted successfully",
+)
+async def delete_application(id: UUID, session=Depends(get_db)):
+    """
+    Endpoint to delete an application
+    """
+    try:
+        # Verify if the application exists in the database
+        application_repository = ApplicationRepository(session)
+        application = application_repository.get_application_by_id(application_id=id)
+        if not application:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="The application was not found",
+            )
+
+        # Delete the application from the database
+        application_repository.delete_application(application=application)
+
+        student_repository = StudentRepository(session)
+        student = student_repository.get_student_by_id(id=application.student_id)
+        student_repository.delete_student(student=student)
+
+
+        # Return success message
+        return {"message": "Application deleted successfully"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Something went wrong while deleting the application: {e}",
+        )
