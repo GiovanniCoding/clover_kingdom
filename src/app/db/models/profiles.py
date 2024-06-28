@@ -1,11 +1,10 @@
 from sqlalchemy import Column, Enum, Integer, String
-from sqlalchemy.orm import relationship
 
 from src.app.db.models.base import BaseModel
-from sqlalchemy.orm import Mapped
 
-
-MagicAffinityEnum = Enum("Oscuridad", "Luz", "Fuego", "Agua", "Viento", "Tierra", name="magic_affinity")
+MagicAffinityEnum = Enum(
+    "Oscuridad", "Luz", "Fuego", "Agua", "Viento", "Tierra", name="magic_affinity"
+)
 
 
 class Profile(BaseModel):
@@ -18,7 +17,7 @@ class Profile(BaseModel):
     magic_affinity = Column(MagicAffinityEnum, nullable=False)
 
 
-class ProfileRepository():
+class ProfileRepository:
     def __init__(self, session):
         self.session = session
 

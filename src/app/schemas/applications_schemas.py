@@ -1,8 +1,8 @@
-from uuid import UUID
-from pydantic import BaseModel
 from typing import Annotated
-from pydantic import field_validator
+from uuid import UUID
+
 import annotated_types
+from pydantic import BaseModel, field_validator
 
 
 class PostApplicationRequest(BaseModel):
@@ -14,9 +14,9 @@ class PostApplicationRequest(BaseModel):
 
     @field_validator("magic_affinity")
     def magic_affinity_option(cls, value: str) -> str:
-        valid_options = ['Oscuridad', 'Luz', 'Fuego', 'Agua', 'Viento', 'Tierra']
+        valid_options = ["Oscuridad", "Luz", "Fuego", "Agua", "Viento", "Tierra"]
         if value not in valid_options:
-            raise ValueError(f'Magic affinity must be one of {valid_options}')
+            raise ValueError(f"Magic affinity must be one of {valid_options}")
         return value
 
 

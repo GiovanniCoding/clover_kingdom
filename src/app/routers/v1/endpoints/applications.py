@@ -1,10 +1,13 @@
 from fastapi import APIRouter
 from fastapi.params import Depends
-from app.db.database import get_db
 
-from app.schemas.applications_schemas import PostApplicationRequest, PostApplicationResponse
+from app.db.database import get_db
 from app.db.models.applications import ApplicationRepository
 from app.db.models.profiles import ProfileRepository
+from app.schemas.applications_schemas import (
+    PostApplicationRequest,
+    PostApplicationResponse,
+)
 
 router = APIRouter()
 
@@ -17,7 +20,9 @@ router = APIRouter()
     response_description="Application created successfully",
     # response_model=PostApplicationResponse,
 )
-async def post_application(application: PostApplicationRequest, session=Depends(get_db)):
+async def post_application(
+    application: PostApplicationRequest, session=Depends(get_db)
+):
     """
     Endpoint to create a new application
     """
@@ -39,10 +44,10 @@ async def post_application(application: PostApplicationRequest, session=Depends(
 
     # Return application created
     return PostApplicationResponse(
-        id = application.id,
-        personal_id = profile.personal_id,
-        name = profile.name,
-        last_name = profile.last_name,
-        age = profile.age,
-        magic_affinity = profile.magic_affinity,
+        id=application.id,
+        personal_id=profile.personal_id,
+        name=profile.name,
+        last_name=profile.last_name,
+        age=profile.age,
+        magic_affinity=profile.magic_affinity,
     )
