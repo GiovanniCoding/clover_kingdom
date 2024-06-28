@@ -7,17 +7,18 @@ from app.schemas.applications_schemas import (
     PostApplicationRequest,
     PostApplicationResponse,
 )
+from typing import List
 
 router = APIRouter()
 
 
 @router.post(
     "/",
-    tags=["applications"],
+    tags=["solicitudes"],
     summary="Create a new application",
     description="Create a new application",
     response_description="Application created successfully",
-    # response_model=PostApplicationResponse,
+    response_model=PostApplicationResponse,
 )
 async def post_application(
     application: PostApplicationRequest, session=Depends(get_db)

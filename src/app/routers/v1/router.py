@@ -7,5 +7,5 @@ router = APIRouter(
 )
 router.include_router(health.router, prefix="/health", tags=["health"])
 router.include_router(
-    applications.router, prefix="/applications", tags=["applications"]
+    applications.router, prefix="/solicitudes", tags=["solicitudes"]
 )
