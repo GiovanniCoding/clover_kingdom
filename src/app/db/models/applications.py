@@ -20,6 +20,9 @@ class Application(BaseModel):
 
     student = relationship("Student", back_populates="applications")
 
+    def __repr__(self):
+        return f"<Application {self.id}>"
+
 
 class ApplicationRepository:
     def __init__(self, session):
