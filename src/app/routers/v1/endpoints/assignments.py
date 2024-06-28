@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.get(
     "/",
-    tags=["solicitudes"],
+    tags=["asignaciones"],
     summary="Get all assignments",
     description="Get all assignments",
     response_description="Assigments retrieved successfully",
