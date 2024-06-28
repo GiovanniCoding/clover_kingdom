@@ -1,7 +1,8 @@
 from typing import List
 from uuid import UUID
-from sqlalchemy.orm import relationship
+
 from sqlalchemy import Column, Enum, Integer, String
+from sqlalchemy.orm import relationship
 
 from src.app.db.models.base import BaseModel
 
@@ -9,7 +10,12 @@ MagicAffinityEnum = Enum(
     "Oscuridad", "Luz", "Fuego", "Agua", "Viento", "Tierra", name="magic_affinity"
 )
 GrimoireRarityEnum = Enum(
-    'Una Hoja', 'Dos Hojas', 'Tres Hojas', 'Cuatro Hojas', 'Cinco Hojas', name="grimoire_rarity"
+    "Una Hoja",
+    "Dos Hojas",
+    "Tres Hojas",
+    "Cuatro Hojas",
+    "Cinco Hojas",
+    name="grimoire_rarity",
 )
 
 

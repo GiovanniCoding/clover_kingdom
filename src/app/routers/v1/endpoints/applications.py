@@ -4,8 +4,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.db.database import get_db
-from app.db.models.students import StudentRepository
 from app.db.models.applications import ApplicationRepository
+from app.db.models.students import StudentRepository
 from app.schemas.applications_schemas import (
     ApplicationResponse,
     PostApplicationRequest,
@@ -182,7 +182,9 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
             )
 
         # Update the application status in database
-        application = application_repository.update_application(application=application, status="Aprobada")
+        application = application_repository.update_application(
+            application=application, status="Aprobada"
+        )
         # TODO: Assign a grimoire to the student
 
         # Return application updated

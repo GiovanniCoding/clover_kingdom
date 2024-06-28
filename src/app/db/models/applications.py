@@ -1,6 +1,9 @@
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Enum, ForeignKey, UUID as PGUUID
 from typing import List
+
+from sqlalchemy import UUID as PGUUID
+from sqlalchemy import Column, Enum, ForeignKey
+from sqlalchemy.orm import relationship
+
 from src.app.db.models.base import BaseModel
 
 ApplicationsStatusEnum = Enum(
@@ -12,9 +15,10 @@ class Application(BaseModel):
     __tablename__ = "applications"
 
     status = Column(ApplicationsStatusEnum, nullable=False)
-    student_id = Column(PGUUID, ForeignKey('students.id'), nullable=False)
+    student_id = Column(PGUUID, ForeignKey("students.id"), nullable=False)
 
     student = relationship("Student", back_populates="applications")
+
 
 class ApplicationRepository:
     def __init__(self, session):
@@ -29,18 +33,23 @@ class ApplicationRepository:
         self.session.commit()
         self.session.refresh(application)
         return application
-    
+
     def get_applications(self) -> List[Application]:
-        return self.session.query(Application).filter(Application.deleted_at.is_(None)).all()
-    
+        return (
+            self.session.query(Application)
+            .filter(Application.deleted_at.is_(None))
+            .all()
+        )
+
     def get_application_by_id(self, application_id: str) -> Application:
-        return self.session.query(Application).filter(
-            Application.id == application_id,
-            Application.deleted_at.is_(None)
-        ).first()
-    
+        return (
+            self.session.query(Application)
+            .filter(Application.id == application_id, Application.deleted_at.is_(None))
+            .first()
+        )
+
     def update_application(self, application: Application, status: str) -> Application:
-        setattr(application, 'status', status)
+        setattr(application, "status", status)
         self.session.commit()
         self.session.refresh(application)
         return application
