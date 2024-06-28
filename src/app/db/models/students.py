@@ -32,6 +32,9 @@ class Student(BaseModel):
 
     applications = relationship("Application", back_populates="student")
 
+    def __repr__(self):
+        return f"<Student {self.name} {self.last_name}>"
+
 
 class StudentRepository:
     def __init__(self, session):

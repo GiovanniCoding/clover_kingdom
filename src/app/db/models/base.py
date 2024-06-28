@@ -2,10 +2,8 @@ from uuid import uuid4
 
 from sqlalchemy import Column, DateTime
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
-
-Base = declarative_base()
+from app.db.database import Base
 
 
 class BaseModel(Base):
