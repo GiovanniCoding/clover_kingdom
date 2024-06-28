@@ -1,11 +1,12 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.db.database import get_db
-from app.db.models.applications import ApplicationRepository
-from app.db.models.profiles import ProfileRepository
+from app.db.models.students import StudentRepository
 from app.schemas.applications_schemas import (
     PostApplicationRequest,
     ApplicationResponse,
+    PutApplicationRequest,
 )
 from typing import List
 
@@ -28,39 +29,34 @@ async def post_application(
     """
     try:
         # Verify if the student id is already in the database
-        profile_repository = ProfileRepository(session)
-        profile = profile_repository.get_profile_by_personal_id(
-            personal_id=application.personal_id
+        student_repository = StudentRepository(session)
+        student = student_repository.get_student_by_student_id(
+            student_id=application.student_id
         )
-        if profile:
+        if student:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="The student id is already in the database",
             )
-        # Create profile in database
-        profile_repository = ProfileRepository(session)
-        profile = profile_repository.create_profile(
-            personal_id=application.personal_id,
+
+        # Create student in database
+        student = student_repository.create_student(
+            student_id=application.student_id,
             name=application.name,
             last_name=application.last_name,
             age=application.age,
             magic_affinity=application.magic_affinity,
         )
 
-        # Create application in database
-        application_repository = ApplicationRepository(session)
-        application = application_repository.create_application(
-            profile_id=profile.id,
-        )
-
         # Return application created
         return ApplicationResponse(
-            id=application.id,
-            personal_id=profile.personal_id,
-            name=profile.name,
-            last_name=profile.last_name,
-            age=profile.age,
-            magic_affinity=profile.magic_affinity,
+            id=student.id,
+            student_id=student.student_id,
+            name=student.name,
+            last_name=student.last_name,
+            age=student.age,
+            magic_affinity=student.magic_affinity,
+            status=student.status,
         )
     except HTTPException as http_exception:
         raise http_exception
@@ -85,18 +81,19 @@ async def get_applications(session=Depends(get_db)) -> List[ApplicationResponse]
     """
     try:
         # Get all applications
-        application_repository = ApplicationRepository(session)
-        applications = application_repository.get_applications()
+        student_repository = StudentRepository(session)
+        applications = student_repository.get_students()
 
         # Return applications
         return [
             ApplicationResponse(
                 id=application.id,
-                personal_id=application.profile.personal_id,
-                name=application.profile.name,
-                last_name=application.profile.last_name,
-                age=application.profile.age,
-                magic_affinity=application.profile.magic_affinity,
+                student_id=application.student_id,
+                name=application.name,
+                last_name=application.last_name,
+                age=application.age,
+                magic_affinity=application.magic_affinity,
+                status=application.status,
             )
             for application in applications
         ]
@@ -104,4 +101,87 @@ async def get_applications(session=Depends(get_db)) -> List[ApplicationResponse]
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Something went wrong while getting the applications: {e}",
+        )
+
+
+@router.put(
+    "/{id}",
+    tags=["solicitudes"],
+    summary="Update an application",
+    description="Update an application",
+    response_description="Application updated successfully",
+    response_model=ApplicationResponse,
+)
+async def put_application(id: UUID, new_values: PutApplicationRequest, session=Depends(get_db)) -> ApplicationResponse:
+    """
+    Endpoint to update an application
+    """
+    try:
+        # Verify if the application exists in the database
+        student_repository = StudentRepository(session)
+        student = student_repository.get_student_by_id(id=id)
+        if not student:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="The application was not found",
+            )
+
+        # Update student in database
+        student = student_repository.update_student(student=student, **new_values.as_dict())
+
+        # Return application updated
+        return ApplicationResponse(
+            id=student.id,
+            student_id=student.student_id,
+            name=student.name,
+            last_name=student.last_name,
+            age=student.age,
+            magic_affinity=student.magic_affinity,
+            status=student.status,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Something went wrong while updating the application: {e}",
+        )
+
+@router.patch(
+    "/{id}",
+    tags=["solicitudes"],
+    summary="Approve an application",
+    description="Approve an application",
+    response_description="Application approved successfully",
+    response_model=ApplicationResponse,
+)
+async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationResponse:
+    """
+    Endpoint to approve an application
+    """
+    try:
+        # Verify if the application exists in the database
+        student_repository = StudentRepository(session)
+        student = student_repository.get_student_by_id(id=id)
+        if not student:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="The application was not found",
+            )
+
+        # Update student in database
+        student = student_repository.update_student(student=student, status='Aprobada')
+
+        # Return application updated
+        return ApplicationResponse(
+            id=student.id,
+            student_id=student.student_id,
+            name=student.name,
+            last_name=student.last_name,
+            age=student.age,
+            magic_affinity=student.magic_affinity,
+            status=student.status,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Something went wrong while updating the application: {e}",
         )
