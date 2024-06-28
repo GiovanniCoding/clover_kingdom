@@ -33,3 +33,13 @@ class ProfileRepository:
         self.session.commit()
         self.session.refresh(profile)
         return profile
+
+    def get_profile_by_personal_id(self, personal_id: str):
+        return (
+            self.session.query(Profile)
+            .filter(
+                Profile.personal_id == personal_id,
+                Profile.deleted_at.is_(None),
+            )
+            .first()
+        )
