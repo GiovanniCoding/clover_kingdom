@@ -11,6 +11,7 @@ from app.schemas.applications_schemas import (
     PostApplicationRequest,
     PutApplicationRequest,
 )
+from app.helpers.grimoire import select_grimoire
 
 router = APIRouter()
 
@@ -185,7 +186,11 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
         application = application_repository.update_application(
             application=application, status="Aprobada"
         )
-        # TODO: Assign a grimoire to the student
+        student_repository = StudentRepository(session)
+        student = student_repository.get_student_by_id(id=application.student_id)
+        student = student_repository.update_student(
+            student=student, grimoire=select_grimoire()
+        )
 
         # Return application updated
         return ApplicationResponse(
@@ -196,6 +201,7 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
             age=application.student.age,
             magic_affinity=application.student.magic_affinity,
             status=application.status,
+            grimoire=application.student.grimoire,
         )
     except Exception as e:
         raise HTTPException(
