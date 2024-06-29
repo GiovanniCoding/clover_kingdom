@@ -23,7 +23,7 @@ router = APIRouter()
     description="Create a new application",
     response_description="Application created successfully",
     response_model=ApplicationResponse,
-    status_code=status.HTTP_201_CREATED  # Indica que la respuesta exitosa será un 201
+    status_code=status.HTTP_201_CREATED,  # Indica que la respuesta exitosa será un 201
 )
 async def post_application(
     application: PostApplicationRequest, session=Depends(get_db)
