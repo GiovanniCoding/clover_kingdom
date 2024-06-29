@@ -9,7 +9,7 @@ run_migrations()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="API para gestionar usuarios e ítems",
+    description="API para gestionar aspirantes a magos",
     version="1.0.0",
 )
 
