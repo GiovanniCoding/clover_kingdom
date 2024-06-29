@@ -158,6 +158,7 @@ async def put_application(
             age=student.age,
             magic_affinity=student.magic_affinity,
             status=application.status,
+            grimoire=student.grimoire,
         )
     except HTTPException as http_exception:
         raise http_exception
