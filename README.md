@@ -59,6 +59,7 @@ Para controlar el CI se utilizó Github Actions, para ello se crearon 2 tareas:
 5. **Pruebas Unitarias**:
     Las pruebas unitarias pueden ser ejecutadas usando make:
     ```env
+    make up
     make test
     ```
 
@@ -98,3 +99,7 @@ Pensando a futuro, se optó por separar la información de los estudiantes (o as
 
 ### Asignaciones (Grimorios)
 - **GET /api/v1/asignaciones/**: Obtener todas las asignaciones de Grimorios.
+
+## Puntos importantes
+- Aunque los aspirantes traen su propio ID, se optó por usar un ID generado por la base de datos, esto para evitar problemas de integridad en la base de datos.
+    - Por este motivo, todas las solicitudes son usando el ID generado por la base de datos.
