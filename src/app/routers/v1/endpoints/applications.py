@@ -191,6 +191,12 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
                 detail="The application was not found",
             )
 
+        if application.status == "Aprobada":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The application is already approved",
+            )
+
         # Update the application status in database
         application = application_repository.update_application(
             application=application, status="Aprobada"

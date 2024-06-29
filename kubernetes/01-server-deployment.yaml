@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: egiovanni/clover-kingdom:1.4.0
+          image: egiovanni/clover-kingdom:1.5.0
           env:
             - name: DB_HOSTNAME
               valueFrom:
