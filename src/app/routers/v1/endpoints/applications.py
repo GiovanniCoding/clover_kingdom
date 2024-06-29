@@ -23,6 +23,7 @@ router = APIRouter()
     description="Create a new application",
     response_description="Application created successfully",
     response_model=ApplicationResponse,
+    status_code=status.HTTP_201_CREATED  # Indica que la respuesta exitosa será un 201
 )
 async def post_application(
     application: PostApplicationRequest, session=Depends(get_db)
@@ -82,6 +83,7 @@ async def post_application(
     description="Get all applications",
     response_description="Applications retrieved successfully",
     response_model=List[ApplicationResponse],
+    status_code=status.HTTP_200_OK,
 )
 async def get_applications(session=Depends(get_db)) -> List[ApplicationResponse]:
     """
@@ -102,9 +104,12 @@ async def get_applications(session=Depends(get_db)) -> List[ApplicationResponse]
                 age=application.student.age,
                 magic_affinity=application.student.magic_affinity,
                 status=application.status,
+                grimoire=application.student.grimoire,
             )
             for application in applications
         ]
+    except HTTPException as http_exception:
+        raise http_exception
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -119,6 +124,7 @@ async def get_applications(session=Depends(get_db)) -> List[ApplicationResponse]
     description="Update an application",
     response_description="Application updated successfully",
     response_model=ApplicationResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def put_application(
     id: UUID, new_values: PutApplicationRequest, session=Depends(get_db)
@@ -153,6 +159,8 @@ async def put_application(
             magic_affinity=student.magic_affinity,
             status=application.status,
         )
+    except HTTPException as http_exception:
+        raise http_exception
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -167,6 +175,7 @@ async def put_application(
     description="Approve an application",
     response_description="Application approved successfully",
     response_model=ApplicationResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationResponse:
     """
@@ -203,6 +212,8 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
             status=application.status,
             grimoire=application.student.grimoire,
         )
+    except HTTPException as http_exception:
+        raise http_exception
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -216,6 +227,7 @@ async def patch_application(id: UUID, session=Depends(get_db)) -> ApplicationRes
     summary="Delete an application",
     description="Delete an application",
     response_description="Application deleted successfully",
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_application(id: UUID, session=Depends(get_db)):
     """
@@ -237,9 +249,8 @@ async def delete_application(id: UUID, session=Depends(get_db)):
         student_repository = StudentRepository(session)
         student = student_repository.get_student_by_id(id=application.student_id)
         student_repository.delete_student(student=student)
-
-        # Return success message
-        return {"message": "Application deleted successfully"}
+    except HTTPException as http_exception:
+        raise http_exception
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

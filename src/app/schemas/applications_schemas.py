@@ -52,7 +52,7 @@ class ApplicationResponse(BaseModel):
     age: int
     magic_affinity: str
     status: str
-    grimoire: str = None
+    grimoire: Optional[str]
 
     def as_dict(self):
         return {
